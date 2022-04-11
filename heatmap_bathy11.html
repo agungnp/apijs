@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Custom popup actions per feature attribute | Sample | ArcGIS API for
+      JavaScript 4.16
+    </title>
+
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      #viewDiv {
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.16/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.16/"></script>
+
+    <script>
+      require([
+	"esri/Basemap",
+        "esri/Map",
+	"esri/layers/CSVLayer",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+	"esri/config"
+      ], function (Basemap,Map, CSVLayer, MapView, FeatureLayer, esriConfig) {
+	esriConfig.portalUrl = "https://idphmbpn-apws01.ad.phm-pertamina.com/geoportal";
+        esriConfig.request.trustedServers.push('https://idphmbpn-apws01.ad.phm-pertamina.com');
+
+	var stamen = new Basemap({
+	  portalItem: {
+	    id: "84edc193c25c4e6e80107a7a7b688776"  // WGS84 Streets Vector webmap
+	    //id: "d0135822507947b2a3809af36f2d91e6"  // WGS84 Streets Vector webmap
+	  }
+	});
+
+        const url =
+          "https://raw.githubusercontent.com/agungnp/apijs/main/test3.csv";
+
+        const template = {
+          title: "{place}",
+          content: "Magnitude {mag}"
+        };
+
+        // The heatmap renderer assigns each pixel in the view with
+        // an intensity value. The ratio of that intensity value
+        // to the maxPixel intensity is used to assign a color
+        // from the continuous color ramp in the colorStops property
+
+          const simpleRenderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-marker",
+              color: "#c80000",
+              size: 5
+            }
+          };
+
+        const layer = new CSVLayer({
+          url: url,
+          title: "Magnitude 2.5+ earthquakes from the last week",
+          copyright: "USGS Earthquakes",
+          renderer: simpleRenderer
+        });
+
+        const map = new Map({
+          basemap: stamen
+          //layers: [layer]
+        });
+
+        // Create the MapView
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 11,
+          center: [117.315102, -0.747736],
+          constraints: {
+            maxScale: 0,
+            minScale: 300000
+          }
+        });
+
+        /********************
+         * Add feature layer
+         ********************/
+        // sampling of breweries
+
+
+      // Underlying states feature layer
+        var featureLayer7 = new FeatureLayer({
+          url:
+            "https://idphmbpn-apws01.ad.phm-pertamina.com/arcgis/rest/services/Layers/Well_Existing/MapServer/0",
+          outFields: ["*"],
+          title: "Well Existing"
+        });
+
+        var featureLayer2 = new FeatureLayer({
+          url:
+            "https://idphmbpn-apws01.ad.phm-pertamina.com/arcgis/rest/services/Layers/Pipeline_Infrastructure/MapServer/3",
+          outFields: ["*"],
+          title: "Pipeline"
+        });
+
+        var featureLayer3 = new FeatureLayer({
+          url:
+            "https://idphmbpn-apws01.ad.phm-pertamina.com/arcgis/rest/services/Layers/Well_Infrastructure/MapServer/4",
+          outFields: ["*"],
+          title: "Platform"
+        });
+
+        var featureLayer4 = new FeatureLayer({
+          url:
+            "https://idphmbpn-apws01.ad.phm-pertamina.com/arcgis/rest/services/Layers/Pile_Marker/MapServer/1",
+          outFields: ["*"],
+          title: "Piles"
+        });
+
+        var  featureLayer5 = new FeatureLayer({
+          url:
+            "https://idphmbpn-apws01.ad.phm-pertamina.com/arcgis/rest/services/Layers/Pipeline_Infrastructure/MapServer/2",
+          outFields: ["*"],
+          title: "Cables"
+        });
+
+        var featureLayer6 = new FeatureLayer({
+          url:
+            "https://idepbpn-adgis03.ad.phm-pertamina.com/arcgis/rest/services/Layers/Crossing_Area/MapServer/1",
+          outFields: ["*"],
+          title: "RC"
+        });
+
+        map.add(layer);
+        map.add(featureLayer2);
+        map.add(featureLayer3);
+        map.add(featureLayer4);
+        map.add(featureLayer6);
+	map.add(featureLayer);
+
+
+      });
+    </script>
+  </head>
+
+  <body class="light">
+    <div id="viewDiv" class="esri-widget"></div>
+  </body>
+</html>
